@@ -2,7 +2,6 @@ from logging import getLogger
 from requests import Session, Request
 from geoip2.errors import AddressNotFoundError
 from datetime import datetime, timezone, date, timedelta
-from influxdb.exceptions import InfluxDBClientError
 
 from varken.structures import TautulliStream
 from varken.helpers import hashit, connection_handler, itemgetter_with_default
@@ -359,10 +358,4 @@ class TautulliAPI(object):
                     }
                 }
             )
-            try:
-                self.dbmanager.write_points(influx_payload)
-            except InfluxDBClientError as e:
-                if "beyond retention policy" in str(e):
-                    self.logger.debug('Only imported 30 days of data per retention policy')
-                else:
-                    self.logger.error('Something went wrong... post this output in discord: %s', e)
+            self.dbmanager.write_points(influx_payload)
