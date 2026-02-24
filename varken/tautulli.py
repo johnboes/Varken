@@ -47,7 +47,7 @@ class TautulliAPI(object):
                 getattr(session, 'ip_address_public')
             except AttributeError:
                 self.logger.error('Public IP attribute missing!!! Do you have an old version of Tautulli (v1)?')
-                exit(1)
+                continue
 
             try:
                 geodata = self.geoiphandler.lookup(session.ip_address_public)

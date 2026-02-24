@@ -2,7 +2,7 @@ import platform
 import schedule
 from time import sleep
 from queue import Queue
-from sys import version
+from sys import version, exit
 from threading import Thread
 from os import environ as env
 from os import access, R_OK, getenv
@@ -89,8 +89,12 @@ if __name__ == "__main__":
 
     vl.logger.info("Varken v%s-%s %s", VERSION, BRANCH, BUILD_DATE)
 
-    CONFIG = INIParser(DATA_FOLDER)
-    DBMANAGER = DBManager(CONFIG.influx_server)
+    try:
+        CONFIG = INIParser(DATA_FOLDER)
+        DBMANAGER = DBManager(CONFIG.influx_server)
+    except RuntimeError as e:
+        vl.logger.critical("Startup failed: %s", e)
+        exit(1)
     QUEUE = Queue()
 
     if CONFIG.sonarr_enabled:

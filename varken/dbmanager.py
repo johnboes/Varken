@@ -22,7 +22,7 @@ class DBManager(object):
         self.logger = getLogger()
         if self.server.url == "influxdb.domain.tld":
             self.logger.critical("You have not configured your varken.ini. Please read Wiki page for configuration")
-            exit()
+            raise RuntimeError("InfluxDB URL is unconfigured (still set to influxdb.domain.tld)")
 
         scheme = 'https' if self.server.ssl else 'http'
         url = f"{scheme}://{self.server.url}:{self.server.port}"
@@ -41,7 +41,7 @@ class DBManager(object):
             self.logger.info('InfluxDB status: %s (version: %s)', health.status, health.version)
         except Exception as e:
             self.logger.critical("Error testing connection to InfluxDB. Please check your url/hostname: %s", e)
-            exit(1)
+            raise RuntimeError(f"Cannot connect to InfluxDB at {url}") from e
 
         found_buckets = self._buckets_api.find_buckets().buckets or []
         bucket_names = [b.name for b in found_buckets]

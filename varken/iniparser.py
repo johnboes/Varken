@@ -65,7 +65,7 @@ class INIParser(object):
                 except IOError as e:
                     self.logger.error("Varken does not have permission to write to %s. Error: %s - Exiting.", e,
                                       self.data_folder)
-                    exit(1)
+                    raise RuntimeError(f"Cannot write to data folder: {self.data_folder}") from e
 
         self.logger.debug('Reading from %s', inifile)
         with open(file_path) as config_ini:
@@ -80,12 +80,12 @@ class INIParser(object):
             self.logger.debug('Writing to %s', inifile)
             if not access(file_path, W_OK):
                 self.logger.error("Config file is incomplete and read-only. Exiting.")
-                exit(1)
+                raise RuntimeError(f"Config file is read-only: {file_path}")
             with open(file_path, 'w') as config_ini:
                 self.config.write(config_ini)
         else:
             self.logger.error('File missing (%s) in %s', ini, self.data_folder)
-            exit(1)
+            raise RuntimeError(f"Config file missing: {ini} in {self.data_folder}")
 
     def url_check(self, url=None, include_port=True, section=None):
         url_check = url
@@ -111,10 +111,10 @@ class INIParser(object):
                 self.logger.error('%s is invalid in module [%s]! URL must host/IP and '
                                   'port if not 80 or 443. ie. localhost:8080',
                                   url_check, module)
-                exit(1)
+                raise RuntimeError(f"Invalid URL '{url_check}' in [{module}]: must be host/IP with optional port")
             else:
                 self.logger.error('%s is invalid in module [%s]! URL must host/IP. ie. localhost', url_check, module)
-                exit(1)
+                raise RuntimeError(f"Invalid URL '{url_check}' in [{module}]: must be host/IP only")
         else:
             self.logger.debug('%s is a valid URL in module [%s].', url_check, module)
             return url_check
@@ -252,7 +252,7 @@ class INIParser(object):
                             if invalid_wan_ip:
                                 self.logger.error('Invalid fallback_ip [%s] set for %s-%s!', fallback_ip, service,
                                                   server_id)
-                                exit(1)
+                                raise RuntimeError(f"Invalid fallback_ip '{fallback_ip}' for {service}-{server_id}: must be a public IP")
 
                             maxmind_license_key = env.get('VRKN_GLOBAL_MAXMIND_LICENSE_KEY',
                                                           self.config.get('global', 'maxmind_license_key'))

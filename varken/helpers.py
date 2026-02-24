@@ -37,7 +37,7 @@ class GeoIPHandler(object):
                 result_status = self.download()
                 if result_status:
                     self.logger.error("Could not download MaxMind DB! You may need to manually install it.")
-                    exit(1)
+                    raise RuntimeError("Could not download MaxMind GeoIP database")
                 else:
                     self.reader = Reader(self.dbfile)
         else:
@@ -149,7 +149,9 @@ def connection_handler(session, request, verify, as_is_reply=False):
     v = verify
     return_json = False
 
-    disable_warnings(InsecureRequestWarning)
+    if not v:
+        disable_warnings(InsecureRequestWarning)
+        logger.debug('SSL verification disabled for request to %s', r.url)
 
     try:
         get = s.send(r, verify=v)
