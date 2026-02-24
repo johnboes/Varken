@@ -1,0 +1,2633 @@
+{
+  "title": "Plex Media Server",
+  "description": "Comprehensive Plex ecosystem monitoring \u2014 streams, library, downloads, server health, storage",
+  "tags": [
+    "plex",
+    "varken",
+    "media"
+  ],
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "schemaVersion": 38,
+  "version": 1,
+  "uid": "plex-media-server-v2",
+  "panels": [
+    {
+      "id": 100,
+      "type": "row",
+      "title": "\ud83c\udfac Now Playing",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Active Streams",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"current_stream_stats\") |> filter(fn:(r) => r._field == \"stream_count\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3
+              },
+              {
+                "color": "red",
+                "value": 6
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Total Bandwidth",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"current_stream_stats\") |> filter(fn:(r) => r._field == \"total_bandwidth\") |> last() |> map(fn:(r) => ({r with _value: r._value / 1000}))",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "kbytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 20000
+              },
+              {
+                "color": "red",
+                "value": 50000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "WAN Bandwidth",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"current_stream_stats\") |> filter(fn:(r) => r._field == \"wan_bandwidth\") |> last() |> map(fn:(r) => ({r with _value: r._value / 1000}))",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "kbytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 20000
+              },
+              {
+                "color": "red",
+                "value": 50000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "LAN Bandwidth",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"current_stream_stats\") |> filter(fn:(r) => r._field == \"lan_bandwidth\") |> last() |> map(fn:(r) => ({r with _value: r._value / 1000}))",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "kbytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 20000
+              },
+              {
+                "color": "red",
+                "value": 50000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Transcoding",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"current_stream_stats\") |> filter(fn:(r) => r._field == \"transcode_streams\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3
+              },
+              {
+                "color": "red",
+                "value": 6
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Direct Play",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"current_stream_stats\") |> filter(fn:(r) => r._field == \"direct_play_streams\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3
+              },
+              {
+                "color": "red",
+                "value": 6
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Users Online",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"Session\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> keep(columns:[\"friendly_name\",\"username\",\"title\",\"quality\",\"video_decision\",\"platform\",\"progress_percent\",\"full_location\",\"media_type\"])",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "footer": {
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "type": "geomap",
+      "title": "Connection Map",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 16,
+        "h": 12
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"Session\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> map(fn:(r) => ({friendly_name: r.friendly_name, title: r.title, location: r.full_location, lat: float(v: r.latitude), lon: float(v: r.longitude)}))",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "rules": [],
+              "showLegend": true,
+              "size": {
+                "fixed": 5,
+                "max": 15,
+                "min": 2
+              },
+              "style": {
+                "color": {
+                  "fixed": "dark-orange"
+                },
+                "opacity": 0.8,
+                "rotation": {
+                  "fixed": 0
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "text": {
+                  "field": "friendly_name",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "latitude": "lat",
+              "longitude": "lon",
+              "mode": "coords"
+            },
+            "name": "Active Sessions",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "view": {
+          "allLayers": true,
+          "id": "zero",
+          "lat": 30,
+          "lon": -40,
+          "zoom": 2
+        }
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      }
+    },
+    {
+      "id": 9,
+      "type": "piechart",
+      "title": "Stream Types",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 13,
+        "w": 8,
+        "h": 12
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"current_stream_stats\") |> filter(fn:(r) => r._field == \"direct_play_streams\" or r._field == \"direct_streams\" or r._field == \"transcode_streams\") |> last() |> group()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "displayLabels": [
+          "name",
+          "value"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 101,
+      "type": "row",
+      "title": "\ud83d\udcda Library",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 10,
+      "type": "stat",
+      "title": "Movies",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 26,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -1h) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"library_stats\" and r.section_type == \"movie\") |> filter(fn:(r) => r._field == \"total\") |> last() |> group() |> sum()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 11,
+      "type": "stat",
+      "title": "TV Shows",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 26,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -1h) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"library_stats\" and r.section_type == \"show\") |> filter(fn:(r) => r._field == \"total\") |> last() |> group() |> sum()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 12,
+      "type": "stat",
+      "title": "Seasons",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 26,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -1h) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"library_stats\" and r.section_type == \"show\") |> filter(fn:(r) => r._field == \"seasons\") |> last() |> group() |> sum()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 13,
+      "type": "stat",
+      "title": "Episodes",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 26,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -1h) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"library_stats\" and r.section_type == \"show\") |> filter(fn:(r) => r._field == \"episodes\") |> last() |> group() |> sum()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Concurrent Streams",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 30,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn:(r) => r._measurement == \"Tautulli\" and r.type == \"current_stream_stats\") |> filter(fn:(r) => r._field == \"stream_count\" or r._field == \"transcode_streams\" or r._field == \"direct_play_streams\" or r._field == \"direct_streams\") |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: false)",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 102,
+      "type": "row",
+      "title": "\u2b07\ufe0f Downloads & Requests",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 38,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 15,
+      "type": "stat",
+      "title": "Radarr Queue",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 6,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Radarr\" and r.type == \"Queue\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> count()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 16,
+      "type": "stat",
+      "title": "Sonarr Queue",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 39,
+        "w": 6,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Sonarr\" and r.type == \"Queue\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> count()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 17,
+      "type": "stat",
+      "title": "Missing Movies",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 39,
+        "w": 6,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -1h) |> filter(fn:(r) => r._measurement == \"Radarr\" and r.type == \"Missing\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> count()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 18,
+      "type": "stat",
+      "title": "Missing Episodes",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 39,
+        "w": 6,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -1h) |> filter(fn:(r) => r._measurement == \"Sonarr\" and r.type == \"Missing\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> count()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 19,
+      "type": "table",
+      "title": "Movies Downloading",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 42,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Radarr\" and r.type == \"Queue\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> keep(columns:[\"name\",\"quality\",\"protocol\",\"_time\"])",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "footer": {
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 20,
+      "type": "table",
+      "title": "TV Shows Downloading",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 42,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -5m) |> filter(fn:(r) => r._measurement == \"Sonarr\" and r.type == \"Queue\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> keep(columns:[\"name\",\"epname\",\"sxe\",\"quality\",\"protocol\",\"_time\"])",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "footer": {
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 21,
+      "type": "table",
+      "title": "Missing Movies",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 50,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -1h) |> filter(fn:(r) => r._measurement == \"Radarr\" and r.type == \"Missing\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> keep(columns:[\"name\",\"_time\"])",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "footer": {
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 22,
+      "type": "table",
+      "title": "Missing TV Episodes",
+      "datasource": {
+        "uid": "efdwaxg1qxt6of",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 50,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "efdwaxg1qxt6of",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"varken\") |> range(start: -1h) |> filter(fn:(r) => r._measurement == \"Sonarr\" and r.type == \"Missing\") |> filter(fn:(r) => r._field == \"hash\") |> group() |> last() |> keep(columns:[\"name\",\"epname\",\"sxe\",\"airsUTC\",\"_time\"])",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "footer": {
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 103,
+      "type": "row",
+      "title": "\ud83d\udda5\ufe0f Server Health",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 58,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 23,
+      "type": "gauge",
+      "title": "CPU %",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 59,
+        "w": 4,
+        "h": 6
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"cpu\" and r.cpu == \"cpu-total\") |> filter(fn:(r) => r._field == \"usage_active\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 24,
+      "type": "gauge",
+      "title": "RAM %",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 59,
+        "w": 4,
+        "h": 6
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"mem\") |> filter(fn:(r) => r._field == \"used_percent\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 25,
+      "type": "stat",
+      "title": "System Uptime",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 59,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"system\") |> filter(fn:(r) => r._field == \"uptime\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "s",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 26,
+      "type": "stat",
+      "title": "Network Upload",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 59,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -3m) |> filter(fn:(r) => r._measurement == \"net\" and r._field == \"bytes_sent\") |> filter(fn:(r) => r.interface != \"lo\") |> group(columns:[\"interface\"]) |> derivative(unit: 1s, nonNegative: true) |> group() |> sum() |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "Bps",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 27,
+      "type": "stat",
+      "title": "Network Download",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 59,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -3m) |> filter(fn:(r) => r._measurement == \"net\" and r._field == \"bytes_recv\") |> filter(fn:(r) => r.interface != \"lo\") |> group(columns:[\"interface\"]) |> derivative(unit: 1s, nonNegative: true) |> group() |> sum() |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "Bps",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 28,
+      "type": "stat",
+      "title": "Load (1m)",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 59,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"system\") |> filter(fn:(r) => r._field == \"load1\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 29,
+      "type": "stat",
+      "title": "Load (5m)",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 62,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"system\") |> filter(fn:(r) => r._field == \"load5\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 30,
+      "type": "stat",
+      "title": "CPU Cores",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 62,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"system\") |> filter(fn:(r) => r._field == \"n_cpus\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 31,
+      "type": "stat",
+      "title": "RAM Total",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 62,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"mem\") |> filter(fn:(r) => r._field == \"total\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 32,
+      "type": "stat",
+      "title": "RAM Used",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 62,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"mem\") |> filter(fn:(r) => r._field == \"used\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 33,
+      "type": "timeseries",
+      "title": "CPU & RAM History",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 65,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn:(r) => r._measurement == \"cpu\" and r.cpu == \"cpu-total\") |> filter(fn:(r) => r._field == \"usage_active\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false) |> set(key:\"_field\", value:\"CPU %\")",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn:(r) => r._measurement == \"mem\") |> filter(fn:(r) => r._field == \"used_percent\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false) |> set(key:\"_field\", value:\"RAM %\")",
+          "refId": "B"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 104,
+      "type": "row",
+      "title": "\ud83d\udcbe Storage",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 73,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 34,
+      "type": "gauge",
+      "title": "System Disk %",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 74,
+        "w": 4,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"disk\" and r.path != \"/run/host_mark/Users\") |> filter(fn:(r) => r._field == \"used_percent\") |> last() |> first()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 35,
+      "type": "stat",
+      "title": "System Disk Used",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 74,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"disk\" and r.path != \"/run/host_mark/Users\") |> filter(fn:(r) => r._field == \"used\") |> last() |> first()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 36,
+      "type": "stat",
+      "title": "System Disk Free",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 74,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"disk\" and r.path != \"/run/host_mark/Users\") |> filter(fn:(r) => r._field == \"free\") |> last() |> first()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 38,
+      "type": "stat",
+      "title": "Media Disk Used",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 74,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"disk\" and r.path == \"/run/host_mark/Users\") |> filter(fn:(r) => r._field == \"used\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 39,
+      "type": "stat",
+      "title": "Media Disk Free",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 74,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"disk\" and r.path == \"/run/host_mark/Users\") |> filter(fn:(r) => r._field == \"free\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 40,
+      "type": "stat",
+      "title": "Media Disk Total",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 74,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"disk\" and r.path == \"/run/host_mark/Users\") |> filter(fn:(r) => r._field == \"total\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 37,
+      "type": "stat",
+      "title": "System Disk Total",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 78,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"disk\" and r.path != \"/run/host_mark/Users\") |> filter(fn:(r) => r._field == \"total\") |> last() |> first()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 41,
+      "type": "gauge",
+      "title": "Media Storage %",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 78,
+        "w": 4,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: -2m) |> filter(fn:(r) => r._measurement == \"disk\" and r.path == \"/run/host_mark/Users\") |> filter(fn:(r) => r._field == \"used_percent\") |> last()",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 42,
+      "type": "timeseries",
+      "title": "Container Memory",
+      "datasource": {
+        "uid": "ffdwct3vbpuyof",
+        "type": "influxdb"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 82,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "ffdwct3vbpuyof",
+            "type": "influxdb"
+          },
+          "query": "from(bucket:\"telegraf\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn:(r) => r._measurement == \"docker_container_mem\") |> filter(fn:(r) => r._field == \"usage\") |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false) |> group(columns:[\"container_name\"])",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      }
+    }
+  ]
+}
