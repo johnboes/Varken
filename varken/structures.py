@@ -12,11 +12,11 @@ if version_info < (3, 6, 2):
 
 # Server Structures
 class InfluxServer(NamedTuple):
-    password: str = 'root'
+    org: str = ''
     port: int = 8086
     ssl: bool = False
+    token: str = ''
     url: str = 'localhost'
-    username: str = 'root'
     verify_ssl: bool = False
 
 

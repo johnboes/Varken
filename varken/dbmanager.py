@@ -1,8 +1,19 @@
 from sys import exit
 from logging import getLogger
-from influxdb import InfluxDBClient
-from requests.exceptions import ConnectionError
-from influxdb.exceptions import InfluxDBServerError
+from influxdb_client import InfluxDBClient, Point
+from influxdb_client.client.write_api import SYNCHRONOUS
+
+
+def _dict_to_point(record):
+    p = Point(record['measurement'])
+    for tag, value in record.get('tags', {}).items():
+        if value is not None:
+            p = p.tag(tag, value)
+    for field, value in record.get('fields', {}).items():
+        p = p.field(field, value)
+    if 'time' in record:
+        p = p.time(record['time'])
+    return p
 
 
 class DBManager(object):
@@ -12,34 +23,39 @@ class DBManager(object):
         if self.server.url == "influxdb.domain.tld":
             self.logger.critical("You have not configured your varken.ini. Please read Wiki page for configuration")
             exit()
-        self.influx = InfluxDBClient(host=self.server.url, port=self.server.port, username=self.server.username,
-                                     password=self.server.password, ssl=self.server.ssl, database='varken',
-                                     verify_ssl=self.server.verify_ssl)
+
+        scheme = 'https' if self.server.ssl else 'http'
+        url = f"{scheme}://{self.server.url}:{self.server.port}"
+
+        self.influx = InfluxDBClient(
+            url=url,
+            token=self.server.token,
+            org=self.server.org,
+            verify_ssl=self.server.verify_ssl
+        )
+        self._write_api = self.influx.write_api(write_options=SYNCHRONOUS)
+        self._buckets_api = self.influx.buckets_api()
+
         try:
-            version = self.influx.request('ping', expected_response_code=204).headers['X-Influxdb-Version']
-            self.logger.info('Influxdb version: %s', version)
-        except ConnectionError:
-            self.logger.critical("Error testing connection to InfluxDB. Please check your url/hostname")
+            health = self.influx.health()
+            self.logger.info('InfluxDB status: %s (version: %s)', health.status, health.version)
+        except Exception as e:
+            self.logger.critical("Error testing connection to InfluxDB. Please check your url/hostname: %s", e)
             exit(1)
 
-        databases = [db['name'] for db in self.influx.get_list_database()]
+        found_buckets = self._buckets_api.find_buckets().buckets or []
+        bucket_names = [b.name for b in found_buckets]
 
-        if 'varken' not in databases:
-            self.logger.info("Creating varken database")
-            self.influx.create_database('varken')
-
-            retention_policies = [policy['name'] for policy in
-                                  self.influx.get_list_retention_policies(database='varken')]
-            if 'varken 30d-1h' not in retention_policies:
-                self.logger.info("Creating varken retention policy (30d-1h)")
-                self.influx.create_retention_policy(name='varken 30d-1h', duration='30d', replication='1',
-                                                    database='varken', default=True, shard_duration='1h')
+        if 'varken' not in bucket_names:
+            self.logger.info("Creating varken bucket")
+            self._buckets_api.create_bucket(bucket_name='varken', org=self.server.org)
 
     def write_points(self, data):
         d = data
         self.logger.debug('Writing Data to InfluxDB %s', d)
         try:
-            self.influx.write_points(d)
-        except (InfluxDBServerError, ConnectionError) as e:
+            points = [_dict_to_point(record) for record in d]
+            self._write_api.write(bucket='varken', org=self.server.org, record=points)
+        except Exception as e:
             self.logger.error('Error writing data to influxdb. Dropping this set of data. '
                               'Check your database! Error: %s', e)

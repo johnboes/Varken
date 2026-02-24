@@ -152,14 +152,14 @@ class INIParser(object):
             ssl = boolcheck(env.get('VRKN_INFLUXDB_SSL', self.config.get('influxdb', 'ssl')))
             verify_ssl = boolcheck(env.get('VRKN_INFLUXDB_VERIFY_SSL', self.config.get('influxdb', 'verify_ssl')))
 
-            username = env.get('VRKN_INFLUXDB_USERNAME', self.config.get('influxdb', 'username'))
-            password = env.get('VRKN_INFLUXDB_PASSWORD', self.config.get('influxdb', 'password'))
+            token = env.get('VRKN_INFLUXDB_TOKEN', self.config.get('influxdb', 'token'))
+            org = env.get('VRKN_INFLUXDB_ORG', self.config.get('influxdb', 'org'))
         except NoOptionError as e:
             self.logger.error('Missing key in %s. Error: %s', "influxdb", e)
             self.rectify_ini()
             return
 
-        self.influx_server = InfluxServer(url=url, port=port, username=username, password=password, ssl=ssl,
+        self.influx_server = InfluxServer(url=url, port=port, token=token, org=org, ssl=ssl,
                                           verify_ssl=verify_ssl)
 
         # Check for all enabled services
