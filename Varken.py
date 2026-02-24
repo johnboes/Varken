@@ -1,3 +1,4 @@
+import signal
 import platform
 import schedule
 from time import sleep
@@ -180,8 +181,17 @@ if __name__ == "__main__":
         vl.logger.error("All services disabled. Exiting")
         exit(1)
 
+    def _handle_signal(signum, frame):
+        vl.logger.info('Received %s, shutting down gracefully...', signal.Signals(signum).name)
+        schedule.clear()
+
+    signal.signal(signal.SIGTERM, _handle_signal)
+    signal.signal(signal.SIGINT, _handle_signal)
+
     schedule.run_all()
 
     while schedule.jobs:
         schedule.run_pending()
         sleep(1)
+
+    vl.logger.info('Varken stopped.')

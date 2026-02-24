@@ -1,6 +1,6 @@
 FROM python:3.9.1-alpine
 
-ENV DEBUG="True" \
+ENV DEBUG="False" \
     DATA_FOLDER="/config" \
     VERSION="0.0.0" \
     BRANCH="edge" \
@@ -30,6 +30,12 @@ COPY /utilities /app/data/utilities
 RUN \
   apk add --no-cache tzdata \
   && pip install --no-cache-dir -r /app/requirements.txt \
-  && sed -i "s/0.0.0/${VERSION}/;s/develop/${BRANCH}/;s/1\/1\/1970/${BUILD_DATE//\//\\/}/" varken/__init__.py
+  && sed -i "s/0.0.0/${VERSION}/;s/develop/${BRANCH}/;s/1\/1\/1970/${BUILD_DATE//\//\\/}/" varken/__init__.py \
+  && addgroup -g 1000 -S varken \
+  && adduser -u 1000 -S -G varken varken \
+  && mkdir -p /config \
+  && chown -R varken:varken /app /config
+
+USER varken
 
 CMD cp /app/data/varken.example.ini /config/varken.example.ini && python3 /app/Varken.py
