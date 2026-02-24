@@ -79,3 +79,5 @@ class TestUniFiServer:
         s = UniFiServer()
         assert s.get_usg_stats_run_seconds == 30
         assert s.verify_ssl is False
+        assert s.username is None
+        assert s.password is None

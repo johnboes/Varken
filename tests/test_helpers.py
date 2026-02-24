@@ -1,5 +1,5 @@
-from unittest.mock import MagicMock, patch
-from requests.exceptions import SSLError, ConnectionError, InvalidSchema
+from unittest.mock import MagicMock, patch, call
+from requests.exceptions import SSLError, ConnectionError, InvalidSchema, ChunkedEncodingError
 
 from varken.helpers import boolcheck, hashit, rfc1918_ip_check, connection_handler
 
@@ -86,6 +86,51 @@ class TestConnectionHandler:
         with patch('varken.helpers.disable_warnings') as mock_dw:
             connection_handler(session, request, verify=False)
             mock_dw.assert_called_once()
+
+    def test_invalid_schema_no_retry(self):
+        session, request = self._make_session(raise_exc=InvalidSchema('bad schema'))
+        with patch('varken.helpers.sleep') as mock_sleep:
+            result = connection_handler(session, request, verify=True)
+        assert result is False
+        mock_sleep.assert_not_called()
+        assert session.send.call_count == 1
+
+    def test_ssl_error_no_retry(self):
+        session, request = self._make_session(raise_exc=SSLError('ssl error'))
+        with patch('varken.helpers.sleep') as mock_sleep:
+            result = connection_handler(session, request, verify=True)
+        assert result is False
+        mock_sleep.assert_not_called()
+        assert session.send.call_count == 1
+
+    def test_connection_error_retries_three_times(self):
+        session, request = self._make_session(raise_exc=ConnectionError('no route'))
+        with patch('varken.helpers.sleep') as mock_sleep:
+            result = connection_handler(session, request, verify=True)
+        assert result is False
+        assert session.send.call_count == 3
+        assert mock_sleep.call_count == 2
+        mock_sleep.assert_has_calls([call(1), call(2)])
+
+    def test_chunked_encoding_error_retries(self):
+        session, request = self._make_session(raise_exc=ChunkedEncodingError('broken'))
+        with patch('varken.helpers.sleep') as mock_sleep:
+            result = connection_handler(session, request, verify=True)
+        assert result is False
+        assert session.send.call_count == 3
+
+    def test_connection_error_succeeds_on_retry(self):
+        session = MagicMock()
+        request = MagicMock()
+        request.url = 'http://test.local/api'
+        response = MagicMock()
+        response.status_code = 200
+        response.json.return_value = {'ok': True}
+        session.send.side_effect = [ConnectionError('transient'), response]
+        with patch('varken.helpers.sleep'):
+            result = connection_handler(session, request, verify=True)
+        assert result == {'ok': True}
+        assert session.send.call_count == 2
 
     def test_ssl_verify_true_no_suppress(self):
         session, request = self._make_session(200, {})

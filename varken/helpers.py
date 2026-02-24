@@ -148,37 +148,46 @@ def connection_handler(session, request, verify, as_is_reply=False):
     r = request
     v = verify
     return_json = False
+    max_retries = 3
 
     if not v:
         disable_warnings(InsecureRequestWarning)
         logger.debug('SSL verification disabled for request to %s', r.url)
 
-    try:
-        get = s.send(r, verify=v)
-        if get.status_code == 401:
-            if 'NoSiteContext' in str(get.content):
-                logger.info('Your Site is incorrect for %s', r.url)
-            elif 'LoginRequired' in str(get.content):
-                logger.info('Your login credentials are incorrect for %s', r.url)
+    for attempt in range(max_retries):
+        try:
+            get = s.send(r, verify=v)
+            if get.status_code == 401:
+                if 'NoSiteContext' in str(get.content):
+                    logger.info('Your Site is incorrect for %s', r.url)
+                elif 'LoginRequired' in str(get.content):
+                    logger.info('Your login credentials are incorrect for %s', r.url)
+                else:
+                    logger.info('Your api key is incorrect for %s', r.url)
+            elif get.status_code == 404:
+                logger.info('This url doesnt even resolve: %s', r.url)
+            elif get.status_code == 200:
+                try:
+                    return_json = get.json()
+                except JSONDecodeError:
+                    logger.error('No JSON response. Response is: %s', get.text)
+            if air:
+                return get
+            break
+        except (InvalidSchema,):
+            logger.error("You added http(s):// in the config file. Don't do that.")
+            break
+        except SSLError as e:
+            logger.error('Either your host is unreachable or you have an SSL issue. : %s', e)
+            break
+        except (ConnectionError, ChunkedEncodingError) as e:
+            if attempt < max_retries - 1:
+                wait = 2 ** attempt
+                logger.warning('Transient error on attempt %d/%d, retrying in %ds: %s',
+                               attempt + 1, max_retries, wait, e)
+                sleep(wait)
             else:
-                logger.info('Your api key is incorrect for %s', r.url)
-        elif get.status_code == 404:
-            logger.info('This url doesnt even resolve: %s', r.url)
-        elif get.status_code == 200:
-            try:
-                return_json = get.json()
-            except JSONDecodeError:
-                logger.error('No JSON response. Response is: %s', get.text)
-        if air:
-            return get
-    except InvalidSchema:
-        logger.error("You added http(s):// in the config file. Don't do that.")
-    except SSLError as e:
-        logger.error('Either your host is unreachable or you have an SSL issue. : %s', e)
-    except ConnectionError as e:
-        logger.error('Cannot resolve the url/ip/port. Check connectivity. Error: %s', e)
-    except ChunkedEncodingError as e:
-        logger.error('Broken connection during request... oops? Error: %s', e)
+                logger.error('Failed after %d attempts: %s', max_retries, e)
 
     return return_json
 

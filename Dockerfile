@@ -1,4 +1,4 @@
-FROM python:3.9.1-alpine
+FROM python:3.11-alpine
 
 ENV DEBUG="False" \
     DATA_FOLDER="/config" \

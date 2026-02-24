@@ -4,9 +4,9 @@ from logging import getLogger
 
 logger = getLogger('temp')
 # Check for python3.6 or newer to resolve erroneous typing.NamedTuple issues
-if version_info < (3, 6, 2):
+if version_info < (3, 9, 0):
     raise RuntimeError(
-        f'Varken requires python3.6.2 or newer. '
+        f'Varken requires python3.9 or newer. '
         f'You are on python{version_info.major}.{version_info.minor}.{version_info.micro}'
     )
 
@@ -83,10 +83,10 @@ class SickChillServer(NamedTuple):
 class UniFiServer(NamedTuple):
     get_usg_stats_run_seconds: int = 30
     id: int = None
-    password: str = 'ubnt'
+    password: str = None
     site: str = None
     url: str = 'unifi.domain.tld:8443'
-    username: str = 'ubnt'
+    username: str = None
     usg_name: str = None
     verify_ssl: bool = False
 
