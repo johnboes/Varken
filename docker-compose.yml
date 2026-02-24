@@ -34,8 +34,8 @@ services:
       - VRKN_INFLUXDB_PORT=8086
       - VRKN_INFLUXDB_SSL=false
       - VRKN_INFLUXDB_VERIFY_SSL=false
-      - VRKN_INFLUXDB_USERNAME=root
-      - VRKN_INFLUXDB_PASSWORD=root
+      - VRKN_INFLUXDB_TOKEN=xxxxxxxxxxxxxxxx
+      - VRKN_INFLUXDB_ORG=your-org
       - VRKN_TAUTULLI_1_URL=tautulli.domain.tld:8181
       - VRKN_TAUTULLI_1_FALLBACK_IP=1.1.1.1
       - VRKN_TAUTULLI_1_APIKEY=xxxxxxxxxxxxxxxx

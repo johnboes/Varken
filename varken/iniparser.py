@@ -12,6 +12,13 @@ from varken.helpers import clean_sid_check, rfc1918_ip_check, boolcheck
 from varken.structures import SonarrServer, RadarrServer, OmbiServer, TautulliServer, InfluxServer
 
 
+def _validate_run_seconds(value, name, section):
+    """Validate that a poll interval is within a sensible range (1–86400 s)."""
+    if not 1 <= value <= 86400:
+        raise ValueError(f"{name}={value} in [{section}]: must be between 1 and 86400 seconds")
+    return value
+
+
 class INIParser(object):
     def __init__(self, data_folder):
         self.config = None
@@ -195,8 +202,10 @@ class INIParser(object):
                         if service in ['sonarr', 'radarr', 'lidarr']:
                             queue = boolcheck(env.get(f'VRKN_{envsection}_QUEUE',
                                                       self.config.get(section, 'queue')))
-                            queue_run_seconds = int(env.get(f'VRKN_{envsection}_QUEUE_RUN_SECONDS',
-                                                    self.config.getint(section, 'queue_run_seconds')))
+                            queue_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_QUEUE_RUN_SECONDS',
+                                            self.config.getint(section, 'queue_run_seconds'))),
+                                'queue_run_seconds', section)
 
                         if service in ['sonarr', 'lidarr']:
                             missing_days = int(env.get(f'VRKN_{envsection}_MISSING_DAYS',
@@ -204,13 +213,15 @@ class INIParser(object):
                             future_days = int(env.get(f'VRKN_{envsection}_FUTURE_DAYS',
                                                       self.config.getint(section, 'future_days')))
 
-                            missing_days_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_MISSING_DAYS_RUN_SECONDS',
-                                self.config.getint(section, 'missing_days_run_seconds')))
+                            missing_days_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_MISSING_DAYS_RUN_SECONDS',
+                                            self.config.getint(section, 'missing_days_run_seconds'))),
+                                'missing_days_run_seconds', section)
 
-                            future_days_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_FUTURE_DAYS_RUN_SECONDS',
-                                self.config.getint(section, 'future_days_run_seconds')))
+                            future_days_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_FUTURE_DAYS_RUN_SECONDS',
+                                            self.config.getint(section, 'future_days_run_seconds'))),
+                                'future_days_run_seconds', section)
 
                             server = SonarrServer(id=server_id, url=scheme + url, api_key=apikey, verify_ssl=verify_ssl,
                                                   missing_days=missing_days, future_days=future_days,
@@ -221,9 +232,10 @@ class INIParser(object):
                         if service == 'radarr':
                             get_missing = boolcheck(env.get(f'VRKN_{envsection}_GET_MISSING',
                                                             self.config.get(section, 'get_missing')))
-                            get_missing_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_GET_MISSING_RUN_SECONDS',
-                                self.config.getint(section, 'get_missing_run_seconds')))
+                            get_missing_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_GET_MISSING_RUN_SECONDS',
+                                            self.config.getint(section, 'get_missing_run_seconds'))),
+                                'get_missing_run_seconds', section)
 
                             server = RadarrServer(id=server_id, url=scheme + url, api_key=apikey, verify_ssl=verify_ssl,
                                                   queue_run_seconds=queue_run_seconds, get_missing=get_missing,
@@ -239,13 +251,15 @@ class INIParser(object):
                             get_activity = boolcheck(env.get(f'VRKN_{envsection}_GET_ACTIVITY',
                                                              self.config.get(section, 'get_activity')))
 
-                            get_activity_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_GET_ACTIVITY_RUN_SECONDS',
-                                self.config.getint(section, 'get_activity_run_seconds')))
+                            get_activity_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_GET_ACTIVITY_RUN_SECONDS',
+                                            self.config.getint(section, 'get_activity_run_seconds'))),
+                                'get_activity_run_seconds', section)
 
-                            get_stats_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_GET_STATS_RUN_SECONDS',
-                                self.config.getint(section, 'get_stats_run_seconds')))
+                            get_stats_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_GET_STATS_RUN_SECONDS',
+                                            self.config.getint(section, 'get_stats_run_seconds'))),
+                                'get_stats_run_seconds', section)
 
                             invalid_wan_ip = rfc1918_ip_check(fallback_ip)
 
@@ -275,15 +289,18 @@ class INIParser(object):
                                 f'VRKN_{envsection}_GET_REQUEST_TOTAL_COUNTS',
                                 self.config.get(section, 'get_request_total_counts')))
 
-                            issue_status_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_ISSUE_STATUS_RUN_SECONDS',
-                                self.config.getint(section, 'issue_status_run_seconds')))
-                            request_type_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_REQUEST_TYPE_RUN_SECONDS',
-                                self.config.getint(section, 'request_type_run_seconds')))
-                            request_total_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_REQUEST_TOTAL_RUN_SECONDS',
-                                self.config.getint(section, 'request_total_run_seconds')))
+                            issue_status_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_ISSUE_STATUS_RUN_SECONDS',
+                                            self.config.getint(section, 'issue_status_run_seconds'))),
+                                'issue_status_run_seconds', section)
+                            request_type_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_REQUEST_TYPE_RUN_SECONDS',
+                                            self.config.getint(section, 'request_type_run_seconds'))),
+                                'request_type_run_seconds', section)
+                            request_total_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_REQUEST_TOTAL_RUN_SECONDS',
+                                            self.config.getint(section, 'request_total_run_seconds'))),
+                                'request_total_run_seconds', section)
 
                             server = OmbiServer(id=server_id, url=scheme + url, api_key=apikey, verify_ssl=verify_ssl,
                                                 request_type_counts=request_type_counts,
@@ -296,9 +313,10 @@ class INIParser(object):
                         if service == 'sickchill':
                             get_missing = boolcheck(env.get(f'VRKN_{envsection}_GET_MISSING',
                                                             self.config.get(section, 'get_missing')))
-                            get_missing_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_GET_MISSING_RUN_SECONDS',
-                                self.config.getint(section, 'get_missing_run_seconds')))
+                            get_missing_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_GET_MISSING_RUN_SECONDS',
+                                            self.config.getint(section, 'get_missing_run_seconds'))),
+                                'get_missing_run_seconds', section)
 
                             server = SickChillServer(id=server_id, url=scheme + url, api_key=apikey,
                                                      verify_ssl=verify_ssl, get_missing=get_missing,
@@ -309,9 +327,10 @@ class INIParser(object):
                             password = env.get(f'VRKN_{envsection}_PASSWORD', self.config.get(section, 'password'))
                             site = env.get(f'VRKN_{envsection}_SITE', self.config.get(section, 'site')).lower()
                             usg_name = env.get(f'VRKN_{envsection}_USG_NAME', self.config.get(section, 'usg_name'))
-                            get_usg_stats_run_seconds = int(env.get(
-                                f'VRKN_{envsection}_GET_USG_STATS_RUN_SECONDS',
-                                self.config.getint(section, 'get_usg_stats_run_seconds')))
+                            get_usg_stats_run_seconds = _validate_run_seconds(
+                                int(env.get(f'VRKN_{envsection}_GET_USG_STATS_RUN_SECONDS',
+                                            self.config.getint(section, 'get_usg_stats_run_seconds'))),
+                                'get_usg_stats_run_seconds', section)
 
                             server = UniFiServer(id=server_id, url=scheme + url, verify_ssl=verify_ssl, site=site,
                                                  username=username, password=password, usg_name=usg_name,

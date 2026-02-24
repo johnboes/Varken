@@ -61,7 +61,7 @@ class TautulliAPI(object):
                     except AddressNotFoundError as e:
                         self.logger.error('%s', e)
 
-                        self.my_ip = self.session.get('http://ip.42.pl/raw').text
+                        self.my_ip = self.session.get('https://api.ipify.org').text
                         self.logger.debug('Looked the public IP and set it to %s', self.my_ip)
 
                         geodata = self.geoiphandler.lookup(self.my_ip)
@@ -77,7 +77,7 @@ class TautulliAPI(object):
                 longitude = geodata.location.longitude
 
             if not geodata.city.name:
-                location = '👽'
+                location = 'Unknown'
             else:
                 location = geodata.city.name
 
@@ -270,7 +270,7 @@ class TautulliAPI(object):
                     except AddressNotFoundError as e:
                         self.logger.error('%s', e)
 
-                        self.my_ip = self.session.get('http://ip.42.pl/raw').text
+                        self.my_ip = self.session.get('https://api.ipify.org').text
                         self.logger.debug('Looked the public IP and set it to %s', self.my_ip)
 
                         geodata = self.geoiphandler.lookup(self.my_ip)
@@ -286,7 +286,7 @@ class TautulliAPI(object):
                 longitude = geodata.location.longitude
 
             if not geodata.city.name:
-                location = '👽'
+                location = 'Unknown'
             else:
                 location = geodata.city.name
 

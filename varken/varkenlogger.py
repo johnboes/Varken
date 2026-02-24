@@ -49,7 +49,7 @@ class VarkenLogger(object):
 
         # Create the Logger
         self.logger = getLogger()
-        self.logger.setLevel(DEBUG)
+        self.logger.setLevel(self.log_level)
 
         # Create a Formatter for formatting the log messages
         logger_formatter = Formatter('%(asctime)s : %(levelname)s : %(module)s : %(message)s', '%Y-%m-%d %H:%M:%S')

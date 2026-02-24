@@ -143,35 +143,31 @@ def rfc1918_ip_check(ip):
 
 
 def connection_handler(session, request, verify, as_is_reply=False):
-    air = as_is_reply
-    s = session
-    r = request
-    v = verify
     return_json = False
     max_retries = 3
 
-    if not v:
+    if not verify:
         disable_warnings(InsecureRequestWarning)
-        logger.debug('SSL verification disabled for request to %s', r.url)
+        logger.debug('SSL verification disabled for request to %s', request.url)
 
     for attempt in range(max_retries):
         try:
-            get = s.send(r, verify=v)
+            get = session.send(request, verify=verify)
             if get.status_code == 401:
                 if 'NoSiteContext' in str(get.content):
-                    logger.info('Your Site is incorrect for %s', r.url)
+                    logger.info('Your Site is incorrect for %s', request.url)
                 elif 'LoginRequired' in str(get.content):
-                    logger.info('Your login credentials are incorrect for %s', r.url)
+                    logger.info('Your login credentials are incorrect for %s', request.url)
                 else:
-                    logger.info('Your api key is incorrect for %s', r.url)
+                    logger.info('Your api key is incorrect for %s', request.url)
             elif get.status_code == 404:
-                logger.info('This url doesnt even resolve: %s', r.url)
+                logger.info('This url doesnt even resolve: %s', request.url)
             elif get.status_code == 200:
                 try:
                     return_json = get.json()
                 except JSONDecodeError:
                     logger.error('No JSON response. Response is: %s', get.text)
-            if air:
+            if as_is_reply:
                 return get
             break
         except (InvalidSchema,):

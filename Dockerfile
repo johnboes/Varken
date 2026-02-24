@@ -27,6 +27,8 @@ COPY /data /app/data
 
 COPY /utilities /app/data/utilities
 
+COPY /entrypoint.sh /app/entrypoint.sh
+
 RUN \
   apk add --no-cache tzdata \
   && pip install --no-cache-dir -r /app/requirements.txt \
@@ -34,8 +36,9 @@ RUN \
   && addgroup -g 1000 -S varken \
   && adduser -u 1000 -S -G varken varken \
   && mkdir -p /config \
-  && chown -R varken:varken /app /config
+  && chown -R varken:varken /app /config \
+  && chmod +x /app/entrypoint.sh
 
 USER varken
 
-CMD cp /app/data/varken.example.ini /config/varken.example.ini && python3 /app/Varken.py
+ENTRYPOINT ["/app/entrypoint.sh"]
